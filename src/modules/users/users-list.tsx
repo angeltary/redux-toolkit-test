@@ -1,5 +1,5 @@
+import { useAppDispatch, useAppSelector } from '@/store'
 import { memo, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../../store'
 import { usersSlice, type UserId } from './users-slice'
 
 export function UsersList() {

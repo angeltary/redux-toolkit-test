@@ -1,5 +1,5 @@
+import { useAppSelector } from '@/store'
 import { useDispatch } from 'react-redux'
-import { useAppSelector } from '../../store'
 import {
   decrementAction,
   incrementAction,

@@ -10,16 +10,16 @@ type CountersState = Record<CounterId, CounterState | undefined>
 
 export const incrementAction = createAction<{
   counterId: CounterId
-}>('countres/increment')
+}>('counters/increment')
 
 export const decrementAction = createAction<{
   counterId: CounterId
-}>('countres/decrement')
+}>('counters/decrement')
 
 const initialCounterState: CounterState = { counter: 0 }
-const initialCountresState: CountersState = {}
+const initialCountersState: CountersState = {}
 
-export const countersReducer = createReducer(initialCountresState, builder => {
+export const countersReducer = createReducer(initialCountersState, builder => {
   builder.addCase(incrementAction, (state, action) => {
     const { counterId } = action.payload
     if (!state[counterId]) {
