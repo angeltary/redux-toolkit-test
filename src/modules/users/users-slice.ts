@@ -9,28 +9,26 @@ export type User = {
 }
 
 type UsersState = {
-  entities: Record<UserId, User>
+  entities: Record<UserId, User | undefined>
   ids: UserId[]
-  selectedUserId: UserId | undefined
+  fetchUsersStatus: 'idle' | 'loading' | 'success' | 'error'
+  fetchUserStatus: 'idle' | 'loading' | 'success' | 'error'
+  deleteUserStatus: 'idle' | 'loading' | 'success' | 'error'
 }
-
-export const initialUsersList: User[] = Array.from({ length: 3000 }, (_, index) => ({
-  id: `user${index + 11}`,
-  name: `User ${index + 11}`,
-  description: `Description for User ${index + 11}`,
-}))
 
 const initialUsersState: UsersState = {
   entities: {},
   ids: [],
-  selectedUserId: undefined,
+  fetchUsersStatus: 'idle',
+  fetchUserStatus: 'idle',
+  deleteUserStatus: 'idle',
 }
 
 export const usersSlice = createSlice({
   name: 'users',
   initialState: initialUsersState,
   selectors: {
-    selectSelectedUserId: state => state.selectedUserId,
+    selectUserById: (state: UsersState, userId: UserId) => state.entities[userId],
     selectSortedUsers: createSelector(
       (state: UsersState) => state.ids,
       (state: UsersState) => state.entities,
@@ -38,6 +36,7 @@ export const usersSlice = createSlice({
       (ids, entities, sort) =>
         ids
           .map(id => entities[id])
+          .filter((user): user is User => !!user)
           .sort((a, b) => {
             if (sort === 'asc') {
               return a.name.localeCompare(b.name)
@@ -46,22 +45,51 @@ export const usersSlice = createSlice({
             }
           }),
     ),
+    selectIsFetchUsersLoading: state => state.fetchUsersStatus === 'loading',
+    selectIsFetchUsersIdle: state => state.fetchUsersStatus === 'idle',
+    selectIsFetchUserLoading: state => state.fetchUserStatus === 'loading',
+    selectIsFetchUserIdle: state => state.fetchUserStatus === 'idle',
+    selectIsDeleteUserLoading: state => state.deleteUserStatus === 'loading',
   },
   reducers: {
-    selected: (state, action: PayloadAction<{ userId: UserId }>) => {
-      state.selectedUserId = action.payload.userId
+    fetchUsersLoading: state => {
+      state.fetchUsersStatus = 'loading'
     },
-    selectRemove: state => {
-      state.selectedUserId = undefined
-    },
-    stored: (state, action: PayloadAction<{ users: User[] }>) => {
+    fetchUsersSuccess: (state, action: PayloadAction<{ users: User[] }>) => {
       const { users } = action.payload
 
+      state.fetchUsersStatus = 'success'
       state.entities = users.reduce((acc, user) => {
         acc[user.id] = user
         return acc
       }, {} as Record<UserId, User>)
       state.ids = users.map(user => user.id)
+    },
+    fetchUsersError: state => {
+      state.fetchUsersStatus = 'error'
+    },
+    fetchUserLoading: state => {
+      state.fetchUserStatus = 'loading'
+    },
+    fetchUserSuccess: (state, action: PayloadAction<{ user: User }>) => {
+      const { user } = action.payload
+
+      state.fetchUserStatus = 'success'
+      state.entities[user.id] = user
+    },
+    fetchUserError: state => {
+      state.fetchUserStatus = 'error'
+    },
+    deleteUserLoading: state => {
+      state.deleteUserStatus = 'loading'
+    },
+    deleteUserSuccess: (state, action: PayloadAction<{ userId: UserId }>) => {
+      state.deleteUserStatus = 'success'
+      delete state.entities[action.payload.userId]
+      state.ids = state.ids.filter(id => id !== action.payload.userId)
+    },
+    deleteUserError: state => {
+      state.deleteUserStatus = 'error'
     },
   },
 })
