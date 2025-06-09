@@ -1,4 +1,4 @@
-import { api } from './modules/shared/api'
+import { api } from '@/modules/shared/api'
 import { router } from './router'
 
 export const extraArgument = {

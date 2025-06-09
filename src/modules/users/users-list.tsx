@@ -1,6 +1,6 @@
-import { useAppSelector } from '@/store'
 import { memo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAppSelector } from '../shared/redux'
 import { usersSlice, type UserId } from './users-slice'
 
 export function UsersList() {

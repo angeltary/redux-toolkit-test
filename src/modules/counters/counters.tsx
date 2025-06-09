@@ -1,5 +1,5 @@
-import { useAppSelector } from '@/store'
 import { useDispatch } from 'react-redux'
+import { useAppSelector } from '../shared/redux'
 import {
   decrementAction,
   incrementAction,

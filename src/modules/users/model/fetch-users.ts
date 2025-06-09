@@ -1,5 +1,5 @@
 import { api } from '@/modules/shared/api'
-import type { AppDispatch, AppState, AppThunk } from '@/store'
+import type { AppDispatch, AppState, AppThunk } from '@/modules/shared/redux'
 import { usersSlice } from '../users-slice'
 
 export const fetchUsers =
